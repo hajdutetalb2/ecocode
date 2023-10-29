@@ -93,13 +93,13 @@ def setup_environment(ForceUpdateDependencies, ForceTemporaryStorage):
 
         return list(added_files) + list(changed_files)
 
-    # Check if CachedRVC.tar.gz exists
+    # Check if CachedRCODE.tar.gz exists
     if ForceTemporaryStorage:
-        file_path = '/content/CachedRVC.tar.gz'
+        file_path = '/content/CachedRCODE.tar.gz'
     else:
-        file_path = '/content/drive/MyDrive/RVC_Cached/CachedRVC.tar.gz'
+        file_path = '/content/drive/MyDrive/RCODE_Cached/CachedRCODE.tar.gz'
 
-    content_file_path = '/content/CachedRVC.tar.gz'
+    content_file_path = '/content/CachedRCODE.tar.gz'
     extract_path = '/'
 
     if not os.path.exists(file_path):
@@ -108,7 +108,7 @@ def setup_environment(ForceUpdateDependencies, ForceTemporaryStorage):
         print('No cached dependency install found. Attempting to download GitHub backup..')
 
         try:
-            download_url = "https://github.com/kalomaze/QuickMangioFixes/releases/download/release3/CachedRVC.tar.gz"
+            download_url = "https://github.com/kalomaze/QuickMangioFixes/releases/download/release3/CachedRCODE.tar.gz"
             subprocess.run(["wget", "-O", file_path, download_url])
             print('Download completed successfully!')
         except Exception as e:
@@ -121,9 +121,9 @@ def setup_environment(ForceUpdateDependencies, ForceTemporaryStorage):
 
     if Path(file_path).exists():
         if ForceTemporaryStorage:
-            print('Finished downloading CachedRVC.tar.gz.')
+            print('Finished downloading CachedRCODE.tar.gz.')
         else:
-            print('CachedRVC.tar.gz found on Google Drive. Proceeding to copy and extract...')
+            print('CachedRCODE.tar.gz found on Google Drive. Proceeding to copy and extract...')
 
         # Check if ForceTemporaryStorage is True and skip copying if it is
         if ForceTemporaryStorage:
@@ -147,7 +147,7 @@ def setup_environment(ForceUpdateDependencies, ForceTemporaryStorage):
             install_packages()
             ForceUpdateDependencies = False
     else:
-        print('CachedRVC.tar.gz not found. Proceeding to create an index of all current files...')
+        print('CachedRCODE.tar.gz not found. Proceeding to create an index of all current files...')
         scan_and_write('/usr/', '/content/usr_files.csv')
 
         install_packages()
@@ -155,13 +155,13 @@ def setup_environment(ForceUpdateDependencies, ForceTemporaryStorage):
         scan_and_write('/usr/', '/content/usr_files_new.csv')
         changed_files = compare_files('/content/usr_files.csv', '/content/usr_files_new.csv')
 
-        with tarfile.open('/content/CachedRVC.tar.gz', 'w:gz') as new_tar:
+        with tarfile.open('/content/CachedRCODE.tar.gz', 'w:gz') as new_tar:
             for file in changed_files:
                 new_tar.add(file)
                 print(f'Added to tar: {file}')
 
-        os.makedirs('/content/drive/MyDrive/RVC_Cached', exist_ok=True)
-        shutil.copy('/content/CachedRVC.tar.gz', '/content/drive/MyDrive/RVC_Cached/CachedRVC.tar.gz')
-        print('Updated CachedRVC.tar.gz copied to Google Drive.')
+        os.makedirs('/content/drive/MyDrive/RCODE_Cached', exist_ok=True)
+        shutil.copy('/content/CachedRCODE.tar.gz', '/content/drive/MyDrive/RCODE_Cached/CachedRCODE.tar.gz')
+        print('Updated CachedRCODE.tar.gz copied to Google Drive.')
         print('Dependencies fully up to date; future runs should be faster.')
 
