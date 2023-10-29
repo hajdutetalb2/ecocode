@@ -4,25 +4,25 @@ import shutil
 import hashlib
 import time
 
-LOGS_FOLDER = '/content/Retrieval-based-Voice-Conversion-WebUI/logs'
-WEIGHTS_FOLDER = '/content/Retrieval-based-Voice-Conversion-WebUI/weights'
-GOOGLE_DRIVE_PATH = '/content/drive/MyDrive/RVC_Backup'
+LOGS_FOLDER = '/content/the_code/logs'
+Ws_FOLDER = '/content/the_code/Ws'
+GOOGLE_DRIVE_PATH = '/content/drive/MyDrive/RCODE_Backup'
 
 def import_google_drive_backup():
     print("Importing Google Drive backup...")
-    GOOGLE_DRIVE_PATH = '/content/drive/MyDrive/RVC_Backup'  # change this to your Google Drive path
-    LOGS_FOLDER = '/content/Retrieval-based-Voice-Conversion-WebUI/logs'
-    WEIGHTS_FOLDER = '/content/Retrieval-based-Voice-Conversion-WebUI/weights'
-    weights_exist = False
+    GOOGLE_DRIVE_PATH = '/content/drive/MyDrive/RCODE_Backup'  # change this to your Google Drive path
+    LOGS_FOLDER = '/content/the_code/logs'
+    Ws_FOLDER = '/content/the_code/Ws'
+    Ws_exist = False
     files_to_copy = []
-    weights_to_copy = []
+    Ws_to_copy = []
     
     def handle_files(root, files, is_weight_files=False):
         for filename in files:
             filepath = os.path.join(root, filename)
             if filename.endswith('.pth') and is_weight_files:
-                weights_exist = True
-                backup_filepath = os.path.join(WEIGHTS_FOLDER, os.path.relpath(filepath, GOOGLE_DRIVE_PATH))
+                Ws_exist = True
+                backup_filepath = os.path.join(Ws_FOLDER, os.path.relpath(filepath, GOOGLE_DRIVE_PATH))
             else:
                 backup_filepath = os.path.join(LOGS_FOLDER, os.path.relpath(filepath, GOOGLE_DRIVE_PATH))
             backup_folderpath = os.path.dirname(backup_filepath)
@@ -30,14 +30,14 @@ def import_google_drive_backup():
                 os.makedirs(backup_folderpath)
                 print(f'Created folder: {backup_folderpath}', flush=True)
             if is_weight_files:
-                weights_to_copy.append((filepath, backup_filepath))
+                Ws_to_copy.append((filepath, backup_filepath))
             else:
                 files_to_copy.append((filepath, backup_filepath))
 
     for root, dirs, files in os.walk(os.path.join(GOOGLE_DRIVE_PATH, 'logs')):
         handle_files(root, files)
     
-    for root, dirs, files in os.walk(os.path.join(GOOGLE_DRIVE_PATH, 'weights')):
+    for root, dirs, files in os.walk(os.path.join(GOOGLE_DRIVE_PATH, 'Ws')):
         handle_files(root, files, True)
 
     # Copy files in batches
@@ -52,21 +52,21 @@ def import_google_drive_backup():
             start_time = time.time()
     print(f'\nImported {len(files_to_copy)} files from Google Drive backup')
 
-    # Copy weights in batches
-    total_weights = len(weights_to_copy)
+    # Copy Ws in batches
+    total_Ws = len(Ws_to_copy)
     start_time = time.time()
-    for i, (source, dest) in enumerate(weights_to_copy, start=1):
+    for i, (source, dest) in enumerate(Ws_to_copy, start=1):
         with open(source, 'rb') as src, open(dest, 'wb') as dst:
             shutil.copyfileobj(src, dst, 1024*1024)  # 1MB buffer size
         # Report progress every 5 seconds or after every 100 files, whichever is less frequent
         if time.time() - start_time > 5 or i % 100 == 0:
-            print(f'\rCopying weight file {i} of {total_weights} ({i * 100 / total_weights:.2f}%)', end="")
+            print(f'\rCopying weight file {i} of {total_Ws} ({i * 100 / total_Ws:.2f}%)', end="")
             start_time = time.time()
-    if weights_exist:
-        print(f'\nImported {len(weights_to_copy)} weight files')
-        print("Copied weights from Google Drive backup to local weights folder.")
+    if Ws_exist:
+        print(f'\nImported {len(Ws_to_copy)} weight files')
+        print("Copied Ws from Google Drive backup to local Ws folder.")
     else:
-        print("\nNo weights found in Google Drive backup.")
+        print("\nNo Ws found in Google Drive backup.")
     print("Google Drive backup import completed.")
 
 def backup_files():
@@ -130,7 +130,7 @@ def backup_files():
         if not updated and not fully_updated:
             print("Files are up to date.")
             fully_updated = True  # if all files are up to date, set the boolean to True
-            copy_weights_folder_to_drive()
+            copy_Ws_folder_to_drive()
 
         with open(last_backup_timestamps_path, 'w') as f:
             for filepath, timestamp in last_backup_timestamps.items():
