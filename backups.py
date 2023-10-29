@@ -3,20 +3,20 @@ import shutil
 import hashlib
 import time
 
-LOGS_FOLDER = '/content/Retrieval-based-Voice-Conversion-WebUI/logs'
-WEIGHTS_FOLDER = '/content/Retrieval-based-Voice-Conversion-WebUI/weights'
-GOOGLE_DRIVE_PATH = '/content/drive/MyDrive/RVC_Backup'
+LOGS_FOLDER = '/content/the_code/logs'
+Ws_FOLDER = '/content/the_code/Ws'
+GOOGLE_DRIVE_PATH = '/content/drive/MyDrive/RCODE_Backup'
 
 def import_google_drive_backup():
-    print("Importing Google Drive backup...")
-    GOOGLE_DRIVE_PATH = '/content/drive/MyDrive/RVC_Backup' # change this to your Google Drive path
-    LOGS_FOLDER = '/content/Retrieval-based-Voice-Conversion-WebUI/logs'
-    WEIGHTS_FOLDER = '/content/Retrieval-based-Voice-Conversion-WebUI/weights'
-    weights_exist = False
+    print("Importing backup...")
+    GOOGLE_DRIVE_PATH = '/content/drive/MyDrive/RCODE_Backup' # change this to your Google Drive path
+    LOGS_FOLDER = '/content/the_code/logs'
+    Ws_FOLDER = '/content/the_code/Ws'
+    Ws_exist = False
     for root, dirs, files in os.walk(GOOGLE_DRIVE_PATH):
         for filename in files:
             filepath = os.path.join(root, filename)
-            if os.path.isfile(filepath) and not filepath.startswith(os.path.join(GOOGLE_DRIVE_PATH, 'weights')):
+            if os.path.isfile(filepath) and not filepath.startswith(os.path.join(GOOGLE_DRIVE_PATH, 'Ws')):
                 backup_filepath = os.path.join(LOGS_FOLDER, os.path.relpath(filepath, GOOGLE_DRIVE_PATH))
                 backup_folderpath = os.path.dirname(backup_filepath)
                 if not os.path.exists(backup_folderpath):
@@ -24,19 +24,19 @@ def import_google_drive_backup():
                     print(f'Created backup folder: {backup_folderpath}', flush=True)
                 shutil.copy2(filepath, backup_filepath) # copy file with metadata
                 print(f'Imported file from Google Drive backup: {filename}')
-            elif filepath.startswith(os.path.join(GOOGLE_DRIVE_PATH, 'weights')) and filename.endswith('.pth'):
-                weights_exist = True
-                weights_filepath = os.path.join(WEIGHTS_FOLDER, os.path.relpath(filepath, os.path.join(GOOGLE_DRIVE_PATH, 'weights')))
-                weights_folderpath = os.path.dirname(weights_filepath)
-                if not os.path.exists(weights_folderpath):
-                    os.makedirs(weights_folderpath)
-                    print(f'Created weights folder: {weights_folderpath}', flush=True)
-                shutil.copy2(filepath, weights_filepath) # copy file with metadata
-                print(f'Imported file from weights: {filename}')
-    if weights_exist:
-        print("Copied weights from Google Drive backup to local weights folder.")
+            elif filepath.startswith(os.path.join(GOOGLE_DRIVE_PATH, 'Ws')) and filename.endswith('.pth'):
+                Ws_exist = True
+                Ws_filepath = os.path.join(Ws_FOLDER, os.path.relpath(filepath, os.path.join(GOOGLE_DRIVE_PATH, 'Ws')))
+                Ws_folderpath = os.path.dirname(Ws_filepath)
+                if not os.path.exists(Ws_folderpath):
+                    os.makedirs(Ws_folderpath)
+                    print(f'Created Ws folder: {Ws_folderpath}', flush=True)
+                shutil.copy2(filepath, Ws_filepath) # copy file with metadata
+                print(f'Imported file from Ws: {filename}')
+    if Ws_exist:
+        print("Copied Ws from Google Drive backup to local Ws folder.")
     else:
-        print("No weights found in Google Drive backup.")
+        print("No Ws found in Google Drive backup.")
     print("Google Drive backup import completed.")
 
 def get_md5_hash(file_path):
@@ -46,15 +46,15 @@ def get_md5_hash(file_path):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def copy_weights_folder_to_drive():
-    destination_folder = os.path.join(GOOGLE_DRIVE_PATH, 'weights')
+def copy_Ws_folder_to_drive():
+    destination_folder = os.path.join(GOOGLE_DRIVE_PATH, 'Ws')
     if not os.path.exists(destination_folder):
         os.makedirs(destination_folder)
 
     num_copied = 0
-    for filename in os.listdir(WEIGHTS_FOLDER):
+    for filename in os.listdir(Ws_FOLDER):
         if filename.endswith('.pth'):
-            source_file = os.path.join(WEIGHTS_FOLDER, filename)
+            source_file = os.path.join(Ws_FOLDER, filename)
             destination_file = os.path.join(destination_folder, filename)
             if not os.path.exists(destination_file):
                 shutil.copy2(source_file, destination_file)
@@ -62,7 +62,7 @@ def copy_weights_folder_to_drive():
                 print(f"Copied {filename} to Google Drive!")
 
     if num_copied == 0:
-        print("No new finished models found for copying.")
+        print("No new finished Ms found for copying.")
     else:
         print(f"Finished copying {num_copied} files to Google Drive!")
 
@@ -112,7 +112,7 @@ def backup_files():
         if not updated and not fully_updated:
             print("Files are up to date.")
             fully_updated = True  # if all files are up to date, set the boolean to True
-            copy_weights_folder_to_drive()
+            copy_Ws_folder_to_drive()
             sleep_time = 15
         else:
             sleep_time = 0.1
