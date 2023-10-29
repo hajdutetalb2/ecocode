@@ -117,9 +117,9 @@ def run_script():
         # New repository link
         new_repo_link = "https://github.com/kalomaze/Mangio-Kalo-Tweaks.git"
         # Temporary path to clone the repository
-        temp_repo_path = "/content/temp_Mangio-RVC-Fork"
+        temp_repo_path = "/content/temp_Mangio-RCODE-Fork"
         # New folder name
-        new_folder_name = "Mangio-RVC-Fork"
+        new_folder_name = "Mangio-RCODE-Fork"
 
         # Clone the latest code from the new repository to a temporary location
         run_cmd(f"git clone {new_repo_link} {temp_repo_path}")
@@ -146,7 +146,7 @@ def run_script():
     # Call the function
     clone_and_copy_repo(repo_path)
 
-    # Download the credentials file for RVC archive sheet
+    # Download the credentials file for RCODE archive sheet
     os.makedirs('/content/the_code/stats/', exist_ok=True)
     run_cmd("wget -q https://cdn.discordapp.com/attachments/945486970883285045/1114717554481569802/peppy-generator-388800-07722f17a188.json -O /content/the_code/stats/peppy-generator-388800-07722f17a188.json")
 
