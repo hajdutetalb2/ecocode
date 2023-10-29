@@ -77,11 +77,11 @@ def run_script():
                             changes_made = True
                         line = new_line
 
-                if 'label=i18n("是否在每次保存时间点将最终小模型保存至weights文件夹"),' in second_previous_line:
+                if 'label=i18n("是否在每次保存时间点将最终小模型保存至Ws文件夹"),' in second_previous_line:
                     if 'value=i18n("否"),' in line:
                         new_line = line.replace('value=i18n("否"),', 'value=i18n("是"),')
                         if new_line != line:
-                            print("Replaced 'value=i18n(\"否\"),' with 'value=i18n(\"是\"),' based on the condition for SAVE SMALL WEIGHTS")
+                            print("Replaced 'value=i18n(\"否\"),' with 'value=i18n(\"是\"),' based on the condition for SAVE SMALL Ws")
                             changes_made = True
                         line = new_line
 
@@ -99,7 +99,7 @@ def run_script():
             print("No changes were needed.")
 
     # Define the repo path
-    repo_path = '/content/Retrieval-based-Voice-Conversion-WebUI'
+    repo_path = '/content/the_code'
 
     def copy_all_files_in_directory(src_dir, dest_dir):
         # Iterate over all files in source directory
@@ -147,22 +147,22 @@ def run_script():
     clone_and_copy_repo(repo_path)
 
     # Download the credentials file for RVC archive sheet
-    os.makedirs('/content/Retrieval-based-Voice-Conversion-WebUI/stats/', exist_ok=True)
-    run_cmd("wget -q https://cdn.discordapp.com/attachments/945486970883285045/1114717554481569802/peppy-generator-388800-07722f17a188.json -O /content/Retrieval-based-Voice-Conversion-WebUI/stats/peppy-generator-388800-07722f17a188.json")
+    os.makedirs('/content/the_code/stats/', exist_ok=True)
+    run_cmd("wget -q https://cdn.discordapp.com/attachments/945486970883285045/1114717554481569802/peppy-generator-388800-07722f17a188.json -O /content/the_code/stats/peppy-generator-388800-07722f17a188.json")
 
     # Forcefully delete any existing torchcrepe dependencies downloaded from an earlier run just in case
-    shutil.rmtree('/content/Retrieval-based-Voice-Conversion-WebUI/torchcrepe', ignore_errors=True)
+    shutil.rmtree('/content/the_code/torchcrepe', ignore_errors=True)
     shutil.rmtree('/content/torchcrepe', ignore_errors=True)
 
     # Download the torchcrepe folder from the maxrmorrison/torchcrepe repository
     run_cmd("git clone https://github.com/maxrmorrison/torchcrepe.git")
-    shutil.move('/content/torchcrepe/torchcrepe', '/content/Retrieval-based-Voice-Conversion-WebUI/')
+    shutil.move('/content/torchcrepe/torchcrepe', '/content/the_code/')
     shutil.rmtree('/content/torchcrepe', ignore_errors=True)  # Delete the torchcrepe repository folder
 
-    # Change the current directory to /content/Retrieval-based-Voice-Conversion-WebUI
-    os.chdir('/content/Retrieval-based-Voice-Conversion-WebUI')
+    # Change the current directory to /content/the_code
+    os.chdir('/content/the_code')
     os.makedirs('pretrained', exist_ok=True)
-    os.makedirs('uvr5_weights', exist_ok=True)
+    os.makedirs('uvar5_Ws', exist_ok=True)
 
 def download_file(url, filepath):
     response = requests.get(url, stream=True)
@@ -173,8 +173,8 @@ def download_file(url, filepath):
             if chunk:
                 file.write(chunk)
 
-def download_pretrained_models():
-    pretrained_models = {
+def download_pretrained_Ms():
+    pretrained_Ms = {
         "pretrained": [
             "D40k.pth",
             "G40k.pth",
@@ -189,25 +189,25 @@ def download_pretrained_models():
             "f0G48k.pth",
             "f0D48k.pth"
         ],
-        "uvr5_weights": [
+        "uvar5_Ws": [
             "HP2-人声vocals+非人声instrumentals.pth",
             "HP5-主旋律人声vocals+其他instrumentals.pth"
         ]
     }
 
     base_url = "https://huggingface.co/lj1995/VoiceConversionWebUI/resolve/main/"
-    base_path = "/content/Retrieval-based-Voice-Conversion-WebUI/"
+    base_path = "/content/the_code/"
 
     # Calculate total number of files to download
-    total_files = sum(len(files) for files in pretrained_models.values()) + 1  # +1 for hubert_base.pt
+    total_files = sum(len(files) for files in pretrained_Ms.values()) + 1  # +1 for hubert_base.pt
 
     with tqdm(total=total_files, desc="Downloading files") as pbar:
-        for folder, models in pretrained_models.items():
+        for folder, Ms in pretrained_Ms.items():
             folder_path = os.path.join(base_path, folder)
             os.makedirs(folder_path, exist_ok=True)
-            for model in models:
-                url = base_url + folder + "/" + model
-                filepath = os.path.join(folder_path, model)
+            for M in Ms:
+                url = base_url + folder + "/" + M
+                filepath = os.path.join(folder_path, M)
                 download_file(url, filepath)
                 pbar.update()
 
@@ -221,4 +221,4 @@ def clone_repository(run_download):
     with ThreadPoolExecutor(max_workers=2) as executor:
         executor.submit(run_script)
         if run_download:
-            executor.submit(download_pretrained_models)
+            executor.submit(download_pretrained_Ms)
